@@ -1,4 +1,4 @@
-package consumer;
+package transaction;
 
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -10,16 +10,19 @@ import org.apache.rocketmq.common.message.MessageExt;
 
 import java.util.List;
 
-public class SomeConsumer {
+/**
+ * 事务消息消费者
+ */
+public class TConsumer {
     public static void main(String[] args) throws MQClientException {
         // 定义一个 Push消费者
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("cg");
         // 指定 nameserver
-        consumer.setNamesrvAddr("192.168.0.104:9876");
+        consumer.setNamesrvAddr("localhost:9876");
         // 从第一条开始消费
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         // 订阅 someTopic，任意 tag
-        consumer.subscribe("someTopic", "*");
+        consumer.subscribe("TransactionTopic", "*");
         // 注册消息监听器
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             /**
