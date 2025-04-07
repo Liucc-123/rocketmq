@@ -10,7 +10,10 @@ import org.apache.rocketmq.common.message.MessageExt;
 
 import java.util.List;
 
-public class SomeConsumer {
+/**
+ * 消费重试
+ */
+public class RetryConsumer {
     public static void main(String[] args) throws MQClientException {
         // 定义一个 Push消费者
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("cg");
@@ -30,9 +33,15 @@ public class SomeConsumer {
              */
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-                for (MessageExt msg : msgs) {
-                    System.out.println(msg);
+                try {
+                    // ...
+                }catch (Throwable e){
+                    // 以下三种情况均会引发消费重试
+                    return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+//                    return null;
+//                    throw new RuntimeException("消费异常");
                 }
+                // 消费成功的返回结果
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });
